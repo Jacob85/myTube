@@ -39,6 +39,16 @@ function findVideo(req, res, next)
 
 function deleteVideo(req,res,next)
 {
+    myTube.Video.remove({videoId:req.params.videoID}, function(error){
+       if (error)
+       {
+           res.send(500, "Error while trying to delete");
+       }
+        else
+       {
+           res.send(200, "video was successfully deleted from db");
+       }
+    });
 }
 
 function findVideos(req,res,next)

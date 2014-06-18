@@ -27,11 +27,30 @@
     <input type="submit" value="Submit">
 </form>
 
+<h1>delete Video</h1>
+<form id="deleteVideoForm" name="input" action="#">
+    <input id="videoIdDelete" type="text" name="videoID"> videoID
+    <input type="submit" value="Submit">
+</form>
 <script>
     $('#getVideoForm').submit(function()
     {
         var origAction = $("#getVideoForm").attr("action");
         $("#getVideoForm").attr("action", origAction + $('#videoID').val() );
+    });
+    $('#deleteVideoForm').submit(function(event)
+    {
+        var videoToDeleteId = $('#videoID').val();
+        console.log("running delete query in on submit event for video id: " + videoToDeleteId );
+        $.ajax({
+            url: 'http://localhost:1400/videos/'+ videoToDeleteId,
+            type: 'DELETE',
+            success: function(result)
+            {
+                alert("video " + videoToDeleteId + " was successfully deleted from db")
+            }
+        });
+        event.preventDefault();
     });
 </script>
 </body>
