@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Videos</title>
+    <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+</head>
+<body>
+<h1>add video</h1>
+<form name="input" action="http://localhost:1400/videos/addVideo" method="post">
+    <input type="text" name="videoID"> videoID
+    <select name="category">
+        <option value="Pop">Pop</option>
+        <option value="Rock">Rock</option>
+        <option value="Comedy">Comedy</option>
+        <option value="Classic">Classic</option>
+    </select>
+    <input type="text" name="rating"> rating
+    <input type="submit" value="Submit">
+</form>
+
+<h1>Get All Videos</h1>
+<a href="http://localhost:1400/videos">get All Videos</a>
+
+<h1>Get Video By ID</h1>
+<form id="getVideoForm" name="input" action="http://localhost:1400/videos/getVideo/" method="get">
+    <input id="videoID" type="text" name="videoID"> videoID
+    <input type="submit" value="Submit">
+</form>
+
+<script>
+    $('#getVideoForm').submit(function()
+    {
+        var origAction = $("#getVideoForm").attr("action");
+        $("#getVideoForm").attr("action", origAction + $('#videoID').val() );
+    });
+</script>
+</body>
+</html>
