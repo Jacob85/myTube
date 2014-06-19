@@ -41,7 +41,7 @@ function VideoController($scope, $http)
         if ($scope.formGetByData.getBy == "Id")
             url = 'http://localhost:1400/videos/getVideo/' + $scope.formGetByData.userInput;
         else if ($scope.formGetByData.getBy == "Category")
-            url = "http://localhost:1400/videos/getVideo/byCategory?category=" + $scope.formGetByData.userInput;
+            url = "http://localhost:1400/videos/getVideo/byCategory?category=" + $scope.formGetByData.userInput + "&sorted="+$scope.formGetByData.sorted;
         else{
             handleErrorMessage($scope, "unKnow Selection made");
             return;

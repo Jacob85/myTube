@@ -61,7 +61,7 @@ function updateVideo(req, res, next)
 function findVideosBYCategory(req, res, next)
 {
     console.log("findVideosBYCategory was called");
-    if (req.params.sorted == 'on')
+    if (req.params.sorted == 'true')
         genericVideoSearch(res, next, {$query: {VideoCategory:req.params.category}, $orderby: {VideoRating : -1}});
     else
         genericVideoSearch(res, next, {VideoCategory:req.params.category});
