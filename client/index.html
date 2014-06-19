@@ -27,6 +27,18 @@
     <input type="submit" value="Submit">
 </form>
 
+<h1>Get Videos By Category</h1>
+<form id="getVideoCategoryForm" name="input" action="http://localhost:1400/videos/getVideo/byCategory" method="get">
+    <select  name="category">
+        <option value="Pop">Pop</option>
+        <option value="Rock">Rock</option>
+        <option value="Comedy">Comedy</option>
+        <option value="Classic">Classic</option>
+    </select>
+    Sort By Rating<input type="checkbox" name="sorted">
+    <input type="submit" value="Submit">
+</form>
+
 <h1>delete Video</h1>
 <form id="deleteVideoForm" name="input" action="#">
     <input id="videoIdDelete" type="text" name="videoID"> videoID
@@ -38,6 +50,7 @@
         var origAction = $("#getVideoForm").attr("action");
         $("#getVideoForm").attr("action", origAction + $('#videoID').val() );
     });
+
     $('#deleteVideoForm').submit(function(event)
     {
         var videoToDeleteId = $('#videoID').val();
@@ -52,6 +65,7 @@
         });
         event.preventDefault();
     });
+    $
 </script>
 </body>
 </html>

@@ -13,6 +13,7 @@ module.exports = {
     {
         server.use(myTubes.restify.queryParser());
         server.use(myTubes.restify.bodyParser());
+        server.get(path+'/getVideo/byCategory', findVideosBYCategory);
         server.get(path+'/getVideo/:videoID', findVideo);
         server.post(path+'/addVideo', addVideo);
         server.get(path,findVideos);
@@ -21,10 +22,37 @@ module.exports = {
     }
 };
 
+function findVideosBYCategory(req, res, next)
+{
+    console.log("findVideosBYCategory was called");
+    if (req.params.sorted == 'on')
+        genericVideoSearch(res, next, {$query: {VideoCategory:req.params.category}, $orderby: {VideoRating : -1}});
+    else
+        genericVideoSearch(res, next, {VideoCategory:req.params.category});
+}
+
 function findVideo(req, res, next)
 {
-    /*check if the video exists in the db*/
-    myTube.Video.find({videoId:req.params.videoID}, function(error,videos){
+    genericVideoSearch(res, next, {videoId:req.params.videoID});
+}
+
+function findVideos(req,res,next)
+{
+    genericVideoSearch(res, next, {});
+}
+
+/**
+ * This function gets a query object to query the database with it
+ * if error occurs the method returns status code 500 with an error message
+ * if the query passed it return the result found as an array
+ * Notice, the response could be an empty array
+ * @param res
+ * @param next
+ * @param query
+ */
+function genericVideoSearch(res, next, query)
+{
+    myTube.Video.find(query, function(error, videos){
         if (error)
         {
             res.send(500, "error while querying the db");
@@ -35,8 +63,8 @@ function findVideo(req, res, next)
             res.send(200,  videos);
         }
     });
-}
 
+}
 function deleteVideo(req,res,next)
 {
     myTube.Video.remove({videoId:req.params.videoID}, function(error){
@@ -51,20 +79,7 @@ function deleteVideo(req,res,next)
     });
 }
 
-function findVideos(req,res,next)
-{
-    myTube.Video.find(function(error, videos){
-       if (error)
-       {
-           res.send(500, "error while querying the db");
-           next();
-       }
-        else
-       {
-           res.send(200,  videos);
-       }
-    });
-}
+
 function addVideoToDb(req, res, next) {
     /*construct the query string*/
     var queryString = myTube.youtubeQueryString.replace("{VideoId}", req.params.videoID);
