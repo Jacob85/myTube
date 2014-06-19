@@ -18,12 +18,46 @@ module.exports = {
         server.post(path+'/addVideo', addVideo);
         server.get(path,findVideos);
         server.del(path+'/:videoID', deleteVideo);
+        server.put(path, updateVideo);
         /*for cross domain support*/
         server.on('MethodNotAllowed', unknownMethodHandler);
         myTube = myTubes;
     }
 };
+function updateVideo(req, res, next)
+{
+    console.log("update Video called");
+    /*check if the video exists in the db*/
+    myTube.Video.find({videoId:req.params.videoId}, function(error,videos){
+        if (error)
+        {
+            /*error in find*/
+            console.log("error in find method");
+            res.send(500, "Internal error while querying the database");
+        }
+        else
+        {
+            if (videos.length == 0)
+            {
+                /*video does not exists in db*/
+                console.log("Video does not exists in db cannot update it");
+                res.send(403,"Video does not exists in db cannot update it...");
 
+            }
+            else
+            {
+                /*video was found in db*/
+                var update = {
+                    VideoCategory: req.params.VideoCategory,
+                    VideoRating: req.params.VideoRating
+                }
+                console.log("run update update with params: " + update);
+                genericUpdate(res, next, {videoId:req.params.videoId}, update);
+            }
+        }
+    });
+
+}
 function findVideosBYCategory(req, res, next)
 {
     console.log("findVideosBYCategory was called");
@@ -66,6 +100,21 @@ function genericVideoSearch(res, next, query)
         }
     });
 
+}
+function genericUpdate(res, next, query, update)
+{
+    myTube.Video.update(query, update, function(error){
+        if (error)
+        {
+            res.send(500, "error while Saving document to the db");
+            next();
+        }
+        else
+        {
+            res.send(200, "Item was updated in db");
+            next();
+        }
+    });
 }
 function deleteVideo(req,res,next)
 {
@@ -150,7 +199,7 @@ function unknownMethodHandler(req, res) {
 
         res.header('Access-Control-Allow-Credentials', true);
         res.header('Access-Control-Allow-Headers', allowHeaders.join(', '));
-        res.header('Access-Control-Allow-Methods', res.methods.join(', '));
+        res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
         res.header('Access-Control-Allow-Origin', req.headers.origin);
 
         return res.send(204);
