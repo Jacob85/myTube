@@ -22,6 +22,12 @@ myTube.server.listen(1400 ,'localhost', function(){
     console.log('%s listening at %s ', myTube.server.name ,
         myTube.server.url);
 });
+myTube.server.use(myTube.restify.fullResponse());
+
+
+
+
+
 
 /*Connect to the remote mongo db and save the connection*/
 myTube.mongoose.connect('mongodb://admin:123456@ds039778.mongolab.com:39778/music');
