@@ -46,9 +46,9 @@ function findVideos(req,res,next)
  * if error occurs the method returns status code 500 with an error message
  * if the query passed it return the result found as an array
  * Notice, the response could be an empty array
- * @param res
- * @param next
- * @param query
+ * @param res response object
+ * @param next next object
+ * @param query query object - this object wil be sent to the find method
  */
 function genericVideoSearch(res, next, query)
 {
