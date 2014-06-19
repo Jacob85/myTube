@@ -9,12 +9,14 @@
     <script src="js/angular.min.js"></script>
     <script src="js/videoController.js"></script>
 </head>
+
 <body>
 <div class="container" ng-controller="VideoController">
     <div class="page-header">
         <h1>My Tube</h1>
     </div>
-    <div class="span12">
+    <div class="row">
+        <div class="span12">
         <table class="table table-striped table-bordered">
             <thead>
             <tr>
@@ -31,8 +33,8 @@
             </thead>
             <tbody>
             <tr ng-repeat="video in videos">
-                <td class="span1" ng-bind="video.videoImageUrl"></td>
-                <td class="span1" ng-bind="video.videoId"></td>
+                <td class="span1"><a ng-href="https://www.youtube.com/watch?v={{video.videoId}}" target="_blank"><img ng-src="{{video.videoImageUrl}}"></a></td>
+                    <td class="span1" ng-bind="video.videoId"></td>
                 <td class="span2" ng-bind="video.videoTitle"></td>
                 <td class="span3" ng-bind="video.videoDescription"></td>
                 <td class="span1" ng-bind="video.videoViewCount"></td>
@@ -44,8 +46,29 @@
             </tbody>
         </table>
     </div>
+    </div>
+    <div class="row controls">
+        <form ng-submit="addVideo()">
+            <div class="span2"> <input class="input-block-level" ng-model="formData.videoID" placeholder="Video Id" type="text" name="videoID"></div>
+            <div class="span2">
+                <select class="input-block-level" ng-model="formData.category" name="category">
+                    <option value="Pop">Pop</option>
+                    <option value="Rock">Rock</option>
+                    <option value="Comedy">Comedy</option>
+                    <option value="Classic">Classic</option>
+                </select>
+            </div>
+            <div class="span2"> <input class="input-block-level" ng-model="formData.rating" type="number" name="rating" placeholder="Video Rating"></div>
+            <div class="span2"><input type="submit" class="span2 btn btn-primary" value="Send"> </div>
+        </form>
+    </div>
+    <div class="row">
+        <div class="span12">
+            <div class="nav well">
+                <h2 id="message" class="text-center">   {{message}} </h2>
+            </div>
+        </div>
+    </div>
 </div>
-<h1>Get All Videos</h1>
-<a href="http://localhost:1400/videos">get All Videos</a>
 </body>
 </html>
