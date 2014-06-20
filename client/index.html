@@ -1,71 +1,177 @@
 <!DOCTYPE html>
-<html>
+<html ng-app>
 <head>
-    <title>My Videos</title>
-    <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+    <meta id="pageNumber" content="1">
+    <title>My Tube</title>
+    <link rel="stylesheet" href="css/bootstrap-responsive.min.css">
+    <link rel="stylesheet" href="css/bootstrap.min.new.css">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css" rel="stylesheet">
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/angular.min.js"></script>
+    <script src="js/videoController.js"></script>
+    <script type="application/dart" src="navBar.dart"></script>
 </head>
+
 <body>
-<h1>add video</h1>
-<form name="input" action="http://localhost:1400/videos/addVideo" method="post">
-    <input type="text" name="videoID"> videoID
-    <select name="category">
-        <option value="Pop">Pop</option>
-        <option value="Rock">Rock</option>
-        <option value="Comedy">Comedy</option>
-        <option value="Classic">Classic</option>
-    </select>
-    <input type="text" name="rating"> rating
-    <input type="submit" value="Submit">
-</form>
+<!-- Fixed navbar -->
+<!--<div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">Project name</a>
+        </div>
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li class="active"><a href="#">Home</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#contact">Contact</a></li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#">Action</a></li>
+                        <li><a href="#">Another action</a></li>
+                        <li><a href="#">Something else here</a></li>
+                        <li class="divider"></li>
+                        <li class="dropdown-header">Nav header</li>
+                        <li><a href="#">Separated link</a></li>
+                        <li><a href="#">One more separated link</a></li>
+                    </ul>
+                </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="../navbar/">Default</a></li>
+                <li><a href="../navbar-static-top/">Static top</a></li>
+                <li class="active"><a href="./">Fixed top</a></li>
+            </ul>
+        </div>&lt;!&ndash;/.nav-collapse &ndash;&gt;
+    </div>
+</div>-->
+<div id="myNavBar">
 
-<h1>Get All Videos</h1>
-<a href="http://localhost:1400/videos">get All Videos</a>
+</div>
+<br>
+<br>
+<div class="container" ng-controller="VideoController">
+    <div class="page-header">
+        <h1>My Tube</h1>
+    </div>
+    <div id="filterTableDiv" class="row controls">
+        <form ng-submit="getBy()">
+            <div class="span2">
+                <select class="input-block-level" ng-model="formGetByData.getBy" name="id">
+                    <option selected="selected" value="Category">Category</option>
+                    <option value="Id">Id</option>
+                </select>
+            </div>
+            <div class="span2"> <input class="input-block-level" ng-model="formGetByData.userInput" type="text" name="userInput" placeholder="Get video by.."></div>
+            <div class="checkbox span2">
+                <input type="checkbox" class="checkbox" ng-model="formGetByData.sorted" name="sorted">Sort By Popularity
+            </div>
+            <div class="span2"><input type="submit" class="span2 btn btn-primary"  value="Get Video"> </div>
+        </form>
+    </div>
+    <div class="row">
+        <div class="span12">
+        <table class="table table-striped table-bordered">
+            <thead>
+            <tr>
+                <th class="span1">Image</th>
+                <th class="span1">ID</th>
+                <th class="span2">Title</th>
+                <th class="span3">Description</th>
+                <th class="span1">Views</th>
+                <th class="span1">Likes</th>
+                <th class="span1">Dislikes</th>
+                <th class="span1">Category</th>
+                <th class="span1">Rating</th>
+                <th class="span1">Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="video in videos">
+                <td class="span1"><a ng-href="https://www.youtube.com/watch?v={{video.videoId}}" target="_blank"><img ng-src="{{video.videoImageUrl}}"></a></td>
+                    <td class="span1" ng-bind="video.videoId"></td>
+                <td class="span2" ng-bind="video.videoTitle"></td>
+                <td class="span3" ng-bind="video.videoDescription"></td>
+                <td class="span1" ng-bind="video.videoViewCount"></td>
+                <td class="span1" ng-bind="video.videoLikeCount"></td>
+                <td class="span1" ng-bind="video.VideoDislikeCount"></td>
+                <td class="span1" ng-bind="video.VideoCategory"></td>
+                <td class="span1" ng-bind="video.VideoRating"></td>
+                <td class="span1">
+                    <a href="#" class="glyphicon glyphicon-remove" ng-click="remove(video)"></a>
+                    <a class="glyphicon glyphicon-edit" data-toggle="modal" href="#editModel" ng-click="editModel(video)"></a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    </div>
+    <div class="row controls">
+        <form ng-submit="addVideo()">
+            <div class="span2"> <input class="input-block-level" ng-model="formData.videoID" placeholder="Video Id" type="text" name="videoID"></div>
+            <div class="span2">
+                <select class="input-block-level" ng-model="formData.category" name="category">
+                    <option selected="selected" value="Pop">Pop</option>
+                    <option value="Rock">Rock</option>
+                    <option value="Comedy">Comedy</option>
+                    <option value="Classic">Classic</option>
+                </select>
+            </div>
+            <div class="span2"> <input class="input-block-level" ng-model="formData.rating" type="number" name="rating" placeholder="Video Rating"></div>
+            <div class="span2"><input type="submit" class="span2 btn btn-primary" value="Send"> </div>
+        </form>
+    </div>
+    <div class="row">
+        <div class="span12">
+            <div class="nav well">
+                <h2 id="message" class="text-center">   {{message}} </h2>
+            </div>
+        </div>
+    </div>
 
-<h1>Get Video By ID</h1>
-<form id="getVideoForm" name="input" action="http://localhost:1400/videos/getVideo/" method="get">
-    <input id="videoID" type="text" name="videoID"> videoID
-    <input type="submit" value="Submit">
-</form>
+    <!--Model to Edit the Page-->
+    <div class="modal fade" id="editModel">
+        <div class="modal-header">
+            <button class="close" data-dismiss="modal">×</button>
+            <h3>Edit Video</h3>
+        </div>
+        <div class="modal-body">
+            <div class="raw">
+                <div class="span6">
+                    <div class="nav well">
+                        <a ng-href="https://www.youtube.com/watch?v={{videoBeingEdit.videoId}}" target="_blank"><img ng-src="{{videoBeingEdit.videoImageUrl}}"></a>
+                        <p>{{videoBeingEdit.videoTitle}}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane">
+                <form ng-submit="editVideo()">
+                    <div class="span2">
+                        <select class="input-block-level" ng-model="videoBeingEdit.VideoCategory" name="category">
+                            <option selected="selected" value="Pop">Pop</option>
+                            <option value="Rock">Rock</option>
+                            <option value="Comedy">Comedy</option>
+                            <option value="Classic">Classic</option>
+                        </select>
+                    </div>
+                    <div class="span2"> <input ng-bind="videoBeingEdit." class="input-block-level" ng-model="videoBeingEdit.VideoRating" type="number" name="rating" placeholder="Video Rating"></div>
+                    <div class="span2"><input type="submit" class="span2 btn btn-primary" value="Save"> </div>
+                </form>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <a href="#" class="btn" data-dismiss="modal">Close</a>
+        </div>
+    </div>
+</div>
 
-<h1>Get Videos By Category</h1>
-<form id="getVideoCategoryForm" name="input" action="http://localhost:1400/videos/getVideo/byCategory" method="get">
-    <select  name="category">
-        <option value="Pop">Pop</option>
-        <option value="Rock">Rock</option>
-        <option value="Comedy">Comedy</option>
-        <option value="Classic">Classic</option>
-    </select>
-    Sort By Popularity<input type="checkbox" name="sorted">
-    <input type="submit" value="Submit">
-</form>
-
-<h1>delete Video</h1>
-<form id="deleteVideoForm" name="input" action="#">
-    <input id="videoIdDelete" type="text" name="videoID"> videoID
-    <input type="submit" value="Submit">
-</form>
-<script>
-    $('#getVideoForm').submit(function()
-    {
-        var origAction = $("#getVideoForm").attr("action");
-        $("#getVideoForm").attr("action", origAction + $('#videoID').val() );
-    });
-
-    $('#deleteVideoForm').submit(function(event)
-    {
-        var videoToDeleteId = $('#videoID').val();
-        console.log("running delete query in on submit event for video id: " + videoToDeleteId );
-        $.ajax({
-            url: 'http://localhost:1400/videos/'+ videoToDeleteId,
-            type: 'DELETE',
-            success: function(result)
-            {
-                alert("video " + videoToDeleteId + " was successfully deleted from db")
-            }
-        });
-        event.preventDefault();
-    });
-    $
-</script>
 </body>
 </html>
