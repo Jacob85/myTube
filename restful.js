@@ -1,5 +1,8 @@
 /**
  * Created by Jacob on 6/18/14.
+ * This file is the RESTful web service we created, in here we config the server t listen on a specific port
+ * in here we make sure we config the database
+ * This is the Start point of the Server
  */
 
 /*our namespace */
@@ -13,6 +16,7 @@ myTube.youtubeQueryString = "https://www.googleapis.com/youtube/v3/videos?id={Vi
 myTube.mongoose = require('mongoose');
 myTube.restify = require('restify');
 myTube.request = require('request');
+/*dependencies from different files*/
 myTube.restfulController = require("./restifyController");
 myTube.mongoConfig = require("./mongoConfig");
 
@@ -41,5 +45,6 @@ myTube.videoSchema.methods.getDetailsAsString =  function(){
 };/* myTube.mongoConfig.getDetailsAsString();*/
 myTube.Video = myTube.mongoose.model('videos', myTube.videoSchema);
 
+/*config the restful server what to do in each request type/url*/
 myTube.restfulController.config(myTube, myTube.server, "/videos");
 

@@ -1,5 +1,6 @@
 /**
  * Created by Jacob on 6/18/14.
+ * This file config the Schema we are using in order to save the video record to db
  */
 
 module.exports = {

@@ -6,6 +6,7 @@ var myTube;
 module.exports = {
     /**
      * config the restful web service and its specific methods
+     * In here we determine which function will run for each use case
      * @param server the server to config
      * @param path  the path to config
      */
@@ -24,6 +25,13 @@ module.exports = {
         myTube = myTubes;
     }
 };
+/**
+ * This function is being called every time we asked to update a video record in the db
+ * The update parameter are received as part of the request object
+ * @param req the request object
+ * @param res the response object
+ * @param next the next object
+ */
 function updateVideo(req, res, next)
 {
     console.log("update Video called");
@@ -58,6 +66,13 @@ function updateVideo(req, res, next)
     });
 
 }
+/**
+ * This function is being called every time we want to select videos from spesific category
+ * We than determine what to do, construct a query string and calling {@link genericVideoSearch}
+ * @param req the request object
+ * @param res the response object
+ * @param next the next object
+ */
 function findVideosBYCategory(req, res, next)
 {
     console.log("findVideosBYCategory was called");
@@ -67,11 +82,25 @@ function findVideosBYCategory(req, res, next)
         genericVideoSearch(res, next, {VideoCategory:req.params.category});
 }
 
+/**
+ * This function is being called every time we want to select a specific video.
+ * The video id is being passed with the request object
+ * @param req the request object
+ * @param res the response object
+ * @param next the next object
+ */
 function findVideo(req, res, next)
 {
     genericVideoSearch(res, next, {videoId:req.params.videoID});
 }
 
+/**
+ *  This function selects all videos in the data base
+ *
+ * @param req the request object
+ * @param res the response object
+ * @param next the next object
+ */
 function findVideos(req,res,next)
 {
     genericVideoSearch(res, next, {});
@@ -101,6 +130,16 @@ function genericVideoSearch(res, next, query)
     });
 
 }
+/**
+ * This function gets a query object to query the database with it and update object with the update instructions to update the db
+ * if error occurs the method returns status code 500 with an error message
+ * if the query passed it return the result found as an array
+ * Notice, the response could be an empty array
+ * @param res response object
+ * @param next next object
+ * @param query query object - this object will be sent to the update method
+ * @param update JSON Object with the instruction to update
+ */
 function genericUpdate(res, next, query, update)
 {
     myTube.Video.update(query, update, function(error){
@@ -116,6 +155,13 @@ function genericUpdate(res, next, query, update)
         }
     });
 }
+
+/**
+ * This function deletes a video from the database.
+ * @param req the request object
+ * @param res the response object
+ * @param next the next object
+ */
 function deleteVideo(req,res,next)
 {
     myTube.Video.remove({videoId:req.params.videoID}, function(error){
@@ -130,7 +176,13 @@ function deleteVideo(req,res,next)
     });
 }
 
-
+/**
+ * This function checks if a specific video exists in DB if it does - send an error message
+ * else query You tube for the video information and, construct a video record and add it to the db
+ * @param req the request object
+ * @param res the response object
+ * @param next the next object
+ */
 function addVideoToDb(req, res, next) {
     /*construct the query string*/
     var queryString = myTube.youtubeQueryString.replace("{VideoId}", req.params.videoID);
@@ -190,6 +242,14 @@ function addVideo(req,res,next)
         }
     });
 }
+
+/**
+ * This function is here to allow the server to get request from different Origins (not only the domain which the srver runs on
+ * And to allow us to get DELETE and PUT HTTP requests
+ * @param req
+ * @param res
+ * @returns {*}
+ */
 function unknownMethodHandler(req, res) {
     if (req.method.toLowerCase() === 'options') {
         console.log('received an options method request');
